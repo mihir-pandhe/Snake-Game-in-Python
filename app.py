@@ -10,6 +10,7 @@ snake = [(WIDTH // 2, HEIGHT // 2)]
 snake_direction = "RIGHT"
 food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
 score = 0
+high_score = 0
 speed = 0.5
 
 
@@ -64,8 +65,10 @@ def place_food():
 
 
 def update_score():
-    global score, speed
+    global score, speed, high_score
     score += 10
+    if score > high_score:
+        high_score = score
     speed = max(0.1, 0.5 - score / 1000)
 
 
@@ -73,6 +76,7 @@ def print_board():
     clear_screen()
     board = [[" " for _ in range(WIDTH)] for _ in range(HEIGHT)]
 
+    # Draw the walls
     for x in range(WIDTH):
         board[0][x] = "#"
         board[HEIGHT - 1][x] = "#"
@@ -89,9 +93,8 @@ def print_board():
 
     for row in board:
         print("".join(row))
-    print(
-        f"\nScore: {score} | Speed: {1/speed:.2f} | Use WASD to move. Press 'Q' to quit."
-    )
+    print(f"\nScore: {score} | High Score: {high_score} | Speed: {1/speed:.2f}")
+    print("Use WASD to move. Press 'Q' to quit.")
 
 
 def get_input():
@@ -116,10 +119,19 @@ def main():
         get_input()
         move_snake()
         if check_collision():
-            print("Game Over!")
+            print(f"Game Over! Your score: {score}")
+            print(f"High Score: {high_score}")
             break
         print_board()
         time.sleep(speed)
+    print("Press any key to restart or 'Q' to quit.")
+    while True:
+        if msvcrt.kbhit():
+            key = msvcrt.getch().decode("utf-8").upper()
+            if key == "Q":
+                sys.exit()
+            else:
+                main()
 
 
 if __name__ == "__main__":
