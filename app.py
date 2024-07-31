@@ -10,6 +10,7 @@ snake = [(WIDTH // 2, HEIGHT // 2)]
 snake_direction = "RIGHT"
 food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
 score = 0
+speed = 0.5
 
 
 def clear_screen():
@@ -17,11 +18,12 @@ def clear_screen():
 
 
 def initialize_game():
-    global snake, snake_direction, food, score
+    global snake, snake_direction, food, score, speed
     snake = [(WIDTH // 2, HEIGHT // 2)]
     snake_direction = "RIGHT"
     food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
     score = 0
+    speed = 0.5
 
 
 def move_snake():
@@ -62,8 +64,9 @@ def place_food():
 
 
 def update_score():
-    global score
+    global score, speed
     score += 10
+    speed = max(0.1, 0.5 - score / 1000)
 
 
 def print_board():
@@ -86,7 +89,9 @@ def print_board():
 
     for row in board:
         print("".join(row))
-    print(f"\nScore: {score}\nUse WASD to move. Press 'q' to quit.")
+    print(
+        f"\nScore: {score} | Speed: {1/speed:.2f} | Use WASD to move. Press 'Q' to quit."
+    )
 
 
 def get_input():
@@ -114,7 +119,7 @@ def main():
             print("Game Over!")
             break
         print_board()
-        time.sleep(0.5)
+        time.sleep(speed)
 
 
 if __name__ == "__main__":
