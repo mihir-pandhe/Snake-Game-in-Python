@@ -1,3 +1,4 @@
+import random
 import os
 import time
 import sys
@@ -7,6 +8,8 @@ WIDTH, HEIGHT = 20, 10
 
 snake = [(WIDTH // 2, HEIGHT // 2)]
 snake_direction = "RIGHT"
+food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
+score = 0
 
 
 def clear_screen():
@@ -14,9 +17,11 @@ def clear_screen():
 
 
 def initialize_game():
-    global snake, snake_direction
+    global snake, snake_direction, food, score
     snake = [(WIDTH // 2, HEIGHT // 2)]
     snake_direction = "RIGHT"
+    food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
+    score = 0
 
 
 def move_snake():
@@ -32,7 +37,12 @@ def move_snake():
 
     new_head = (head_x, head_y)
     snake.insert(0, new_head)
-    snake.pop()
+
+    if new_head == food:
+        place_food()
+        update_score()
+    else:
+        snake.pop()
 
 
 def check_collision():
@@ -42,6 +52,18 @@ def check_collision():
     if (head_x, head_y) in snake[1:]:
         return True
     return False
+
+
+def place_food():
+    global food
+    food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
+    while food in snake:
+        food = (random.randint(1, WIDTH - 2), random.randint(1, HEIGHT - 2))
+
+
+def update_score():
+    global score
+    score += 10
 
 
 def print_board():
@@ -59,9 +81,12 @@ def print_board():
         if 1 <= x < WIDTH - 1 and 1 <= y < HEIGHT - 1:
             board[y][x] = "*"
 
+    fx, fy = food
+    board[fy][fx] = "O"
+
     for row in board:
         print("".join(row))
-    print("\nUse WASD to move. Press 'q' to quit.")
+    print(f"\nScore: {score}\nUse WASD to move. Press 'q' to quit.")
 
 
 def get_input():
